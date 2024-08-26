@@ -1,6 +1,8 @@
 import { Box, Button, Card, Checkbox, TextField } from "@mui/material";
 import React, { useState } from "react";
 import useTodoStore from "./stores/TodoStore";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const Todo = () => {
   const { todoStore, addTodo, removeTodo, completeTodo, updateTodo } =
@@ -101,21 +103,27 @@ const Todo = () => {
                 onChange={() => handleCheckboxChange(todo.id)}
               />
               <Box
-                onClick={() => handleEditTodo(todo, index + 1)}
-                className={`${
-                  todo.completed && "line-through text-gray-400"
-                } cursor-pointer`}
+                className={`${todo.completed && "line-through text-gray-400"} `}
               >
                 {todo.data}
               </Box>
             </Box>
-            <Button
-              onClick={() => handleRemoveTodo(todo.id)}
-              color="error"
-              className="rounded-3xl"
-            >
-              Remove
-            </Button>
+            <Box className="flex md:flex-row flex-col ">
+              <Button
+                onClick={() => handleEditTodo(todo, index + 1)}
+                className="rounded-3xl text-green-700"
+                disabled={todo.completed}
+              >
+                <EditIcon />
+              </Button>
+              <Button
+                onClick={() => handleRemoveTodo(todo.id)}
+                color="error"
+                className="rounded-3xl"
+              >
+                <DeleteIcon />
+              </Button>
+            </Box>
           </Box>
         ))}
       </Card>
