@@ -102,7 +102,9 @@ const Todo = () => {
               />
               <Box
                 onClick={() => handleEditTodo(todo, index + 1)}
-                className={`${todo.completed && "line-through text-gray-400"}`}
+                className={`${
+                  todo.completed && "line-through text-gray-400"
+                } cursor-pointer`}
               >
                 {todo.data}
               </Box>
