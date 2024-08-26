@@ -81,6 +81,7 @@ const Todo = () => {
             className="w-full"
             label={isEditing ? `Edit Todo ${editIndex}` : "Add Todo"}
             placeholder="Enter your todos"
+            autocomplete=false
           />
           <Button
             onClick={handleSubmit}
