@@ -3,15 +3,17 @@ import React, { useState } from "react";
 import useTodoStore from "./stores/TodoStore";
 
 const Todo = () => {
-  const { todoStore, addTodo, removeTodo, completeTodo } = useTodoStore(
-    (state) => state
-  );
+  const { todoStore, addTodo, removeTodo, completeTodo, updateTodo } =
+    useTodoStore((state) => state);
 
   const [todoValue, setTodoValue] = useState({
     id: "",
     data: "",
     completed: false,
   });
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editIndex, setEditindex] = useState(null);
 
   const handleChange = (e) => {
     setTodoValue((prv) => ({
@@ -20,13 +22,19 @@ const Todo = () => {
     }));
   };
 
-  const handleClick = () => {
+  const handleSubmit = () => {
     if (todoValue.data !== "") {
-      addTodo({
-        ...todoValue,
-        id: Math.floor(Math.random() * 1000),
-        completed: false,
-      });
+      if (isEditing) {
+        updateTodo({ ...todoValue });
+        setIsEditing(false);
+      } else {
+        addTodo({
+          ...todoValue,
+          id: Math.floor(Math.random() * 1000),
+          completed: false,
+        });
+      }
+
       setTodoValue({
         id: "",
         data: "",
@@ -37,16 +45,26 @@ const Todo = () => {
 
   const handleKeyDown = (e) => {
     if (e.keyCode === 13) {
-      handleClick();
+      handleSubmit();
     }
   };
 
   const handleRemoveTodo = (id) => {
     removeTodo(id);
+    if (isEditing && todoValue.id === id) {
+      setIsEditing(false);
+      setTodoValue({ id: "", data: "", completed: false });
+    }
   };
 
   const handleCheckboxChange = (id) => {
     completeTodo(id);
+  };
+
+  const handleEditTodo = (todo, index) => {
+    setTodoValue({ ...todo });
+    setIsEditing(true);
+    setEditindex(index);
   };
 
   return (
@@ -59,18 +77,18 @@ const Todo = () => {
             onKeyDown={handleKeyDown}
             name="data"
             className="w-full"
-            label="Add Todo"
+            label={isEditing ? `Edit Todo ${editIndex}` : "Add Todo"}
             placeholder="Enter your todos"
           />
           <Button
-            onClick={handleClick}
+            onClick={handleSubmit}
             variant="contained"
             className="m-2 md:w-1/3 md:text-2xl"
           >
-            Add
+            {isEditing ? "Update" : "Add"}
           </Button>
         </Box>
-        {todoStore.map((todo) => (
+        {todoStore.map((todo, index) => (
           <Box
             key={todo.id}
             className={`flex justify-between items-center ${
@@ -83,9 +101,8 @@ const Todo = () => {
                 onChange={() => handleCheckboxChange(todo.id)}
               />
               <Box
-                className={`${
-                  todo.completed ? "line-through text-gray-400" : ""
-                }`}
+                onClick={() => handleEditTodo(todo, index + 1)}
+                className={`${todo.completed && "line-through text-gray-400"}`}
               >
                 {todo.data}
               </Box>

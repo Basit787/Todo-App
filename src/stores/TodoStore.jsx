@@ -23,6 +23,14 @@ const TodoStore = (set) => ({
       ),
     }));
   },
+
+  updateTodo: (updatedTodo) => {
+    set((state) => ({
+      todoStore: state.todoStore.map((todo) =>
+        todo.id === updatedTodo.id ? updatedTodo : todo
+      ),
+    }));
+  },
 });
 
 const useTodoStore = create(devtools(persist(TodoStore, { name: "todo" })));
